@@ -6,18 +6,20 @@ $( document ).ready(function() {
 	var pgto; //Prestacao
 	var ca; //carencia
 	var j; //juros
-	var data = new Array();
+	var data = [];
+	var dataSFA = new Array();
+	var dataSAC = new Array();
+	var dataSAM = new Array();
 	var div = "#box";
-
-	data.push(["n", "Saldo Devedor", "Amortização", "Juros", "Prestacao"]);
 
 	function SFA() {
 		values();
+		firstRow(dataSFA);
 		if(ca != 0){
 			$("h4").text("Sistema Francês de Amortização (Carência + saldo devedor corrigido)");
 			for (var k = 1; k <= ca; k++) {
 				sd = sd * (1+i);
-				data.push([k, sd.toFixed(2), 0, 0, 0]);
+				dataSFA.push([k, sd.toFixed(2), 0, 0, 0]);
 			}
 		}
 		else
@@ -29,18 +31,18 @@ $( document ).ready(function() {
 			pa = pgto - j;
 			sd = sd - pa;
 
-			data.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
 			dataSFA.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
 		}
 	}
 
 	function SAC(){
 		values();
+		firstRow(dataSAC);
 		if(ca != 0){
 			$("h4").text("Sistema de Amortização Constante (Carência + saldo devedor corrigido)");
 			for (var k = 1; k <= ca; k++) {
 				sd = sd * (1+i);
-				data.push([k, sd.toFixed(2), 0, 0, 0]);
+				dataSAC.push([k, sd.toFixed(2), 0, 0, 0]);
 			}
 		}
 		else
@@ -51,12 +53,13 @@ $( document ).ready(function() {
 			j = sd * i * 1;
 			pgto = pa + j;
 			sd = sd - pa;
-			data.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
+			dataSAC.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
 		}
 	}
 
 	function SAM(){
 		values();
+		firstRow(dataSAM);
 		$("h4").text("Sistema de Amortização Misto");
 		sdSFA = sd;
 		sdSAC = sd;
@@ -76,27 +79,28 @@ $( document ).ready(function() {
 			j = (jSFA + jSAC)/2;
 			pa = (paSFA + paSAC)/2;
 			sd = sd - pa;
-			data.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
+			dataSAM.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
 		}
 	}
 	
-	function createTable(){
+	function createTable(dataset){
+
 		var table = $("<table />");
 		table[0].border = "1";
 
-        var columnCount = data[0].length;
+        var columnCount = dataset[0].length;
         var row = $(table[0].insertRow(-1));
         for (var i = 0; i < columnCount; i++) {
             var headerCell = $("<th />");
-            headerCell.html(data[0][i]);
+            headerCell.html(dataset[0][i]);
             row.append(headerCell);
         }
 
-        for (var i = 1; i < data.length; i++) {
+        for (var i = 1; i < dataset.length; i++) {
             row = $(table[0].insertRow(-1));
             for (var j = 0; j < columnCount; j++) {
                 var cell = $("<td />");
-                cell.html(data[i][j]);
+                cell.html(dataset[i][j]);
                 row.append(cell);
             }
         }
@@ -104,7 +108,12 @@ $( document ).ready(function() {
         var box = $(div);
         box.html("");
         box.append(table);
-        data.length = 1;
+        dataset.length = 0;
+  	}
+
+  	function firstRow(dataset){
+  		dataset.push(["n", "Saldo Devedor", "Amortização", "Juros", "Prestacao"]);
+  		dataset.push([0, sd, 0, 0, 0]);
   	}
 
   	function values(){
@@ -112,11 +121,10 @@ $( document ).ready(function() {
 		i = $("#i").val()/100;
 		n = $("#n").val();
 		ca = $("#ca").val();
-
-		data.push([0, sd, 0, 0, 0]);
   	}
 
 	$("#btn").click(function(){
+		div = "#box";
 		$("#p1").empty();
 		$("#p2").empty();
 		$("#p3").empty();
@@ -126,35 +134,40 @@ $( document ).ready(function() {
 
 		if($(".radio:checked").val() == "sfa"){
       		SFA();
+      		createTable(dataSFA);    
      	}
       	else if($(".radio:checked").val() == "sac"){
       		SAC();
+      		createTable(dataSAC);    
       	}
       	else if ($(".radio:checked").val() == "sam"){
       		SAM();
+      		createTable(dataSAM);    
+      	}
+      	else if ($(".radio:checked").val() == "comp"){
+      		compare();
       	}
 
-      	createTable();    
    	});
 
-   	$("#btn2").click(function(){	
+   function compare(){	
       	SFA();
       	$("#p1").text("Sistema Francês de Amortização");
-      	createTable();    
+      	createTable(dataSFA);    
  
       	SAC();
       	$("#p2").text("Sistema de Amortização Constante");
  		div = "#box2"
-      	createTable();    
+      	createTable(dataSAC);    
 
       	SAM();
       	$("#p3").text("Sistema de Amortização Misto");
  		div = "#box3"
-      	createTable();    
+      	createTable(dataSAM);    
       	
       	$("h4").empty();
       	plot();
-   	});
+   	}
 
 	$(".radio").click(function(){
       if ($(".radio:checked").val() == "sam"){
@@ -166,17 +179,24 @@ $( document ).ready(function() {
    });
 
 
+	function dados(){
+		var data = {};
+		var keys = ['sfa', 'sac', 'sam'];
+		var values = [dataSFA, dataSAC, dataSAM ];
+		keys.forEach((key, i)=>data[key] = values[i]);
+		console.log(data);
+	}
 	function plot() {
-	
+		var keys = dataSFA.columns.slice(1);
 		var mySVG = d3.select("svg");	   
-		var group = mySVG.append("g").attr("transform","translate(0,500),scale(1,-1)");
+		var group = mySVG.append("g");
 		var barWidth = 40;
 		var slack = 2;
 		
 		//
 		group
 		.selectAll("rect")
-		.data(dataset)
+		.data(dataSFA)
 		.enter()
 		.append("rect")
 		.attr("x",function(d,i){return i*(barWidth+slack);})
@@ -186,7 +206,7 @@ $( document ).ready(function() {
 		.attr("height",function(d){return (d/30.0)*500;});
 
 		//
-		mySVG
+		/*mySVG
 		.selectAll("text")
 		.data(dataset)
 		.enter()
@@ -195,6 +215,6 @@ $( document ).ready(function() {
 		.attr("y",function(d){return 15+500-(d/30.0)*500;})
 		.attr("text-anchor","middle")
 		.attr("fill","white")
-		.text(function(d){return d;});
+		.text(function(d){return d;});*/
 	}
 });
