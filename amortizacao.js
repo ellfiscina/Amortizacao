@@ -6,20 +6,42 @@ $( document ).ready(function() {
 	var pgto; //Prestacao
 	var ca; //carencia
 	var j; //juros
-	var data = [];
-	var dataSFA = new Array();
-	var dataSAC = new Array();
-	var dataSAM = new Array();
+	var dataSFA = [];
+	var dataSAC = [];
+	var dataSAM = [];
+	var dSD = [];
+	var dPA = [];
+	var dJ = [];
+	var dPG = [];
 	var div = "#box";
+
+	function mapear(n, sd, pa, j, pgto, dataset){
+		dataset.push({n:n, "Saldo Devedor":sd, Amortização:pa, Juros:j, Prestação:pgto});
+		if(dataset == dataSFA)
+			dSD.push(["sfa", n, sd]);
+			dPA.push(["sfa", n, pa]);
+			dJ.push(["sfa", n, j]);
+			dPG.push(["sfa", n, pg]);
+		if(dataset == dataSAC)
+			dSD.push(["sac", n, sd]);
+			dPA.push(["sac", n, pa]);
+			dJ.push(["sac", n, j]);
+			dPG.push(["sac", n, pg]);
+		if(dataset == dataSAM)
+			dSD.push(["sam", n, sd]);
+			dPA.push(["sam", n, pa]);
+			dJ.push(["sam", n, j]);
+			dPG.push(["sam", n, pg]);
+	}
 
 	function SFA() {
 		values();
-		firstRow(dataSFA);
+		mapear(0, sd, 0, 0, 0, dataSFA);
 		if(ca != 0){
 			$("h4").text("Sistema Francês de Amortização (Carência + saldo devedor corrigido)");
 			for (var k = 1; k <= ca; k++) {
 				sd = sd * (1+i);
-				dataSFA.push([k, sd.toFixed(2), 0, 0, 0]);
+				mapear(k, sd.toFixed(2), 0, 0, 0, dataSFA);
 			}
 		}
 		else
@@ -30,19 +52,19 @@ $( document ).ready(function() {
 			j = sd * i * 1;
 			pa = pgto - j;
 			sd = sd - pa;
-
-			dataSFA.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
+			mapear(k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2), dataSFA);
 		}
+		
 	}
 
 	function SAC(){
 		values();
-		firstRow(dataSAC);
+		mapear(0, sd, 0, 0, 0, dataSAC);
 		if(ca != 0){
 			$("h4").text("Sistema de Amortização Constante (Carência + saldo devedor corrigido)");
 			for (var k = 1; k <= ca; k++) {
 				sd = sd * (1+i);
-				dataSAC.push([k, sd.toFixed(2), 0, 0, 0]);
+				mapear(k, sd.toFixed(2), 0, 0, 0, dataSFA);
 			}
 		}
 		else
@@ -53,13 +75,13 @@ $( document ).ready(function() {
 			j = sd * i * 1;
 			pgto = pa + j;
 			sd = sd - pa;
-			dataSAC.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
+			mapear(k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2), dataSAC);
 		}
 	}
 
 	function SAM(){
 		values();
-		firstRow(dataSAM);
+		mapear(0, sd, 0, 0, 0, dataSAM);
 		$("h4").text("Sistema de Amortização Misto");
 		sdSFA = sd;
 		sdSAC = sd;
@@ -79,7 +101,7 @@ $( document ).ready(function() {
 			j = (jSFA + jSAC)/2;
 			pa = (paSFA + paSAC)/2;
 			sd = sd - pa;
-			dataSAM.push([k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2)]);
+			mapear(k, sd.toFixed(2), pa.toFixed(2), j.toFixed(2), pgto.toFixed(2), dataSAM);
 		}
 	}
 	
@@ -88,19 +110,19 @@ $( document ).ready(function() {
 		var table = $("<table />");
 		table[0].border = "1";
 
-        var columnCount = dataset[0].length;
+        var columnCount = 5;
         var row = $(table[0].insertRow(-1));
-        for (var i = 0; i < columnCount; i++) {
+        for (var key in dataset[0]) {
             var headerCell = $("<th />");
-            headerCell.html(dataset[0][i]);
+            headerCell.html(key);
             row.append(headerCell);
         }
 
-        for (var i = 1; i < dataset.length; i++) {
+        for (var i = 0; i < dataset.length; i++) {
             row = $(table[0].insertRow(-1));
-            for (var j = 0; j < columnCount; j++) {
-                var cell = $("<td />");
-                cell.html(dataset[i][j]);
+            for(var key in dataset[i]){
+            	var cell = $("<td />");
+                cell.html(dataset[i][key]);
                 row.append(cell);
             }
         }
@@ -109,11 +131,6 @@ $( document ).ready(function() {
         box.html("");
         box.append(table);
         dataset.length = 0;
-  	}
-
-  	function firstRow(dataset){
-  		dataset.push(["n", "Saldo Devedor", "Amortização", "Juros", "Prestacao"]);
-  		dataset.push([0, sd, 0, 0, 0]);
   	}
 
   	function values(){
@@ -153,8 +170,8 @@ $( document ).ready(function() {
    function compare(){	
       	SFA();
       	$("#p1").text("Sistema Francês de Amortização");
+      	plot(dataSFA);
       	createTable(dataSFA);    
- 
       	SAC();
       	$("#p2").text("Sistema de Amortização Constante");
  		div = "#box2"
@@ -163,10 +180,10 @@ $( document ).ready(function() {
       	SAM();
       	$("#p3").text("Sistema de Amortização Misto");
  		div = "#box3"
-      	createTable(dataSAM);    
-      	
+      	createTable(dataSAM);   
+
       	$("h4").empty();
-      	plot();
+
    	}
 
 	$(".radio").click(function(){
@@ -176,27 +193,18 @@ $( document ).ready(function() {
       else if($(".radio:checked").val() == "sac" | $(".radio:checked").val() == "sfa"){
       	$("#ca").removeAttr("disabled");
       }
-   });
+   	});
 
-
-	function dados(){
-		var data = {};
-		var keys = ['sfa', 'sac', 'sam'];
-		var values = [dataSFA, dataSAC, dataSAM ];
-		keys.forEach((key, i)=>data[key] = values[i]);
-		console.log(data);
-	}
-	function plot() {
-		var keys = dataSFA.columns.slice(1);
+	function plot(dataset) {
+		
 		var mySVG = d3.select("svg");	   
 		var group = mySVG.append("g");
 		var barWidth = 40;
 		var slack = 2;
 		
-		//
 		group
 		.selectAll("rect")
-		.data(dataSFA)
+		.data(dataset)
 		.enter()
 		.append("rect")
 		.attr("x",function(d,i){return i*(barWidth+slack);})
