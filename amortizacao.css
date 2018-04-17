@@ -1,0 +1,82 @@
+body{
+	background: #0f0c29;  /* fallback for old browsers */
+	background: -webkit-linear-gradient(to right, #24243e, #302b63, #0f0c29);  /* Chrome 10-25, Safari 5.1-6 */
+	background: linear-gradient(to right, #24243e, #302b63, #0f0c29); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+header{
+	height: 100px;
+	text-align: center;
+	color: #ecf0f1;
+}
+h1{
+	position: relative;
+	top: 20px;
+}
+#main{
+	background: #ecf0f1;
+	width: 60%;
+	height: fill-content;
+	font-size: 18px;
+	padding-bottom: 80px;
+}
+p, h4{	
+	font-weight: bold;
+}
+#p1, #p2, #p3{
+	position: relative;
+	top: 20px;
+}
+#r{
+	position: relative;
+	top: 20px;
+	left: 50px;
+	padding: 10px 10px 10px 10px;
+}
+input[type="radio"]{
+	float: left;
+	margin-right: 5px;
+  	vertical-align: middle;
+}
+.row{
+	border: 0.5px solid #bdc3c7;
+	width: 90%;
+	align-self: center;
+	position: relative;
+	left: 50px;
+	top: 20px;
+	height: 300px;
+}
+#form{
+	position: relative;
+	left: 70px;
+}
+#btn, #btn2{
+	position: relative;
+	right: 40px;
+	width: 100px;
+	top: 40px;
+}
+table{
+	text-align: center;
+	color: #3498db;
+	position: relative;
+	left: 35px;
+	top: 20px;
+	border: 0.5px solid #bdc3c7;
+}
+hr{
+	display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: inset;
+    border-width: 0.5px;
+	border-color: #bdc3c7;
+}
+#box, #box2, #box3{
+	position: relative;
+	top: 5px;
+	margin-top: 5px;
+	margin-bottom: 10px;
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="amortizacao.css">
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+	<header>
+		<h1>Atividade de Economia</h1>
+	</header>
+	<div class="container" id="main">
+		<h3>Amortização</h3>
+		<hr>
+		<div class="row">
+			<div class="col-md-6" id="form">
+				<br><label>Saldo Devedor:</label><br>
+				<input type="text" name="sd" id="sd">
+				<br><label>Taxa de juro (%):</label><br>
+				<input type="text" name="i" id="i" placeholder="Ex: 95.9">
+				<br><label>Qtd de pagamentos:</label><br>
+				<input type="text" name="n" id="n">
+				<br><label>Carência:</label><br>
+				<input type="text" name="ca" id="ca" value="0">
+				<br>
+			</div>
+			<div class="col-md-6">
+				<div id="r">
+					<p>Calcular:</p>
+					<input type="radio" class="radio" name="tipo" value="sfa" checked><label>SFA</label><br>
+	  				<input type="radio" class="radio" name="tipo" value="sac"><label>SAC</label><br>
+	  				<input type="radio" class="radio" name="tipo" value="sam"><label>SAM</label><br>
+	  				<br><br><p></p>
+				</div>
+			</div>
+			<button id="btn">Calcular</button>
+			<button id="btn2">Comparar</button>
+		</div>
+		<br><br>
+		<h3>Resultado: </h3>
+		<hr>
+			<h4></h4>
+		<div id="res">
+			<div class="col-md-6">
+			<p id="p1"></p>
+			<div id="box"></div>
+			<p id="p2"></p>
+			<div id="box2"></div>
+			<p id="p3"></p>
+			<div id="box3"></div>
+			</div>
+			<div class="col-md-6">
+				<svg width="300" height="300"></svg>
+			</div>
+		</div>
+	</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="amortizacao.js"></script>
+</body>
+</html>
