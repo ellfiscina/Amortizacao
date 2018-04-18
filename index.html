@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="amortizacao.css">
 	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
 </head>
 <body>
 	<header>
@@ -41,19 +42,33 @@
 		<br><br>
 		<h3>Resultado: </h3>
 		<hr>
-			<h4></h4>
 		<div id="res">
-			<div class="col-md-6">
-			<p id="p1"></p>
-			<div id="box"></div>
-			<p id="p2"></p>
-			<div id="box2"></div>
-			<p id="p3"></p>
-			<div id="box3"></div>
+			<div>
+				<p id="p"></p>
+				<div id="box"></div>
 			</div>
-			<div class="col-md-6">
-				<svg width="300" height="300"></svg>
+			<div class="col-md-4">
+				<p class="pC" id="p1">Sistema Francês de Amortização</p>
+				<div class="boxC" id="box1"></div>
 			</div>
+			<div class="col-md-4">
+				<p class="pC" id="p2">Sistema de Amortização Constante</p>
+				<div class="boxC" id="box2"></div>
+			</div>
+			<div class="col-md-4">
+				<p class="pC" id="p3">Sistema de Amortização Misto</p>
+				<div class="boxC" id="box3"></div>
+			</div>
+		</div>
+		<br><br>
+		<div>
+			<div class="col-md-6 graph" id="svg1"></div>
+			<div class="col-md-6 graph" id="svg2"></div>
+		</div>
+		<br>
+		<div>
+			<div class="col-md-6 graph" id="svg3"></div>
+			<div class="col-md-6 graph" id="svg4"></div>
 		</div>
 	</div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>

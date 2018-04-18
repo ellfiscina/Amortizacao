@@ -14,7 +14,7 @@ h1{
 }
 #main{
 	background: #ecf0f1;
-	width: 60%;
+	width: 90%;
 	height: fill-content;
 	font-size: 18px;
 	padding-bottom: 80px;
@@ -22,7 +22,7 @@ h1{
 p, h4{	
 	font-weight: bold;
 }
-#p1, #p2, #p3{
+.pC, #p{
 	position: relative;
 	top: 20px;
 }
@@ -54,7 +54,7 @@ input[type="radio"]{
 	position: relative;
 	left: 75px;
 	width: 100px;
-	top: 3px;
+	top: 47px;
 }
 table{
 	text-align: center;
@@ -74,9 +74,21 @@ hr{
     border-width: 0.5px;
 	border-color: #bdc3c7;
 }
-#box, #box2, #box3{
+.boxC{
 	position: relative;
 	top: 5px;
+	right: 40px;
 	margin-top: 5px;
 	margin-bottom: 10px;
+}
+svg{
+	position: relative;
+	top: 50px;
+	border: 0.5px solid #bdc3c7;
+}
+.pGraph{
+	position: relative;
+	top: 50px;
+	font-weight: normal;
+	text-decoration: underline;
 }
