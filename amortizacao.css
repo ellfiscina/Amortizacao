@@ -50,11 +50,11 @@ input[type="radio"]{
 	position: relative;
 	left: 70px;
 }
-#btn, #btn2{
+#btn{
 	position: relative;
-	right: 40px;
+	left: 75px;
 	width: 100px;
-	top: 40px;
+	top: 3px;
 }
 table{
 	text-align: center;

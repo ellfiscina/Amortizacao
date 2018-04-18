@@ -16,22 +16,7 @@ $( document ).ready(function() {
 	var div = "#box";
 
 	function mapear(n, sd, pa, j, pgto, dataset){
-		dataset.push({n:n, "Saldo Devedor":sd, Amortização:pa, Juros:j, Prestação:pgto});
-		if(dataset == dataSFA)
-			dSD.push(["sfa", n, sd]);
-			dPA.push(["sfa", n, pa]);
-			dJ.push(["sfa", n, j]);
-			dPG.push(["sfa", n, pg]);
-		if(dataset == dataSAC)
-			dSD.push(["sac", n, sd]);
-			dPA.push(["sac", n, pa]);
-			dJ.push(["sac", n, j]);
-			dPG.push(["sac", n, pg]);
-		if(dataset == dataSAM)
-			dSD.push(["sam", n, sd]);
-			dPA.push(["sam", n, pa]);
-			dJ.push(["sam", n, j]);
-			dPG.push(["sam", n, pg]);
+		dataset.push({n:n, "Saldo Devedor":sd, "Amortização":pa, "Juros":j, "Prestação":pgto});
 	}
 
 	function SFA() {
@@ -169,21 +154,36 @@ $( document ).ready(function() {
 
    function compare(){	
       	SFA();
-      	$("#p1").text("Sistema Francês de Amortização");
-      	plot(dataSFA);
-      	createTable(dataSFA);    
       	SAC();
+      	SAM();
+
+      	$("#p1").text("Sistema Francês de Amortização");
       	$("#p2").text("Sistema de Amortização Constante");
+      	$("#p3").text("Sistema de Amortização Misto");
+      	
+      	for (var i = 0; i < n; i++) {
+      		dSD.push({n:i, sfa:dataSFA[i]["Saldo Devedor"], 
+      			sac:dataSAC[i]["Saldo Devedor"], 
+      			sam:dataSAM[i]["Saldo Devedor"]});
+      		dPA.push({n:i, sfa:dataSFA[i]["Amortização"], 
+      			sac:dataSAC[i]["Amortização"], 
+      			sam:dataSAM[i]["Amortização"]});
+      		dJ.push({n:i, sfa:dataSFA[i]["Juros"], 
+      			sac:dataSAC[i]["Juros"], 
+      			sam:dataSAM[i]["Juros"]});
+      		dPG.push({n:i, sfa:dataSFA[i]["Prestação"], 
+      			sac:dataSAC[i]["Prestação"], 
+      			sam:dataSAM[i]["Prestação"]});
+      	}
+
+      	createTable(dataSFA);    
  		div = "#box2"
       	createTable(dataSAC);    
-
-      	SAM();
-      	$("#p3").text("Sistema de Amortização Misto");
  		div = "#box3"
       	createTable(dataSAM);   
 
       	$("h4").empty();
-
+      	plot();
    	}
 
 	$(".radio").click(function(){
@@ -195,34 +195,66 @@ $( document ).ready(function() {
       }
    	});
 
-	function plot(dataset) {
+	function plot() {
+		var margin = {top: 20, right: 50, bottom: 30, left: 50},
+		        width = 400 - margin.left - margin.right,
+		        height = 300 - margin.top - margin.bottom;
+		 
+		var x = d3.scale.ordinal()
+		        .rangeRoundBands([0, width], .35);
+		 
+		var y = d3.scale.linear()
+		        .rangeRound([height, 0]);
+		 
+		var color = d3.scale.category20();
+		 
+		var svg = d3.select("body").append("svg")
+		        .attr("width", width + margin.left + margin.right)
+		        .attr("height", height + margin.top + margin.bottom)
+		        .append("g")
+		        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		 
+		var xData = ["sfa", "sac", "sam"];
+		var dataset = xData.map(function (c) {
+		    return dSD.map(function (d) {
+		        return {x: d.n, y: d[c]};
+		    });
+		});
 		
-		var mySVG = d3.select("svg");	   
-		var group = mySVG.append("g");
-		var barWidth = 40;
-		var slack = 2;
-		
-		group
-		.selectAll("rect")
-		.data(dataset)
-		.enter()
-		.append("rect")
-		.attr("x",function(d,i){return i*(barWidth+slack);})
-		.attr("y",0)
-		.attr("fill","blue")
-		.attr("width",function(d){return barWidth;})
-		.attr("height",function(d){return (d/30.0)*500;});
-
-		//
-		/*mySVG
-		.selectAll("text")
-		.data(dataset)
-		.enter()
-		.append("text")
-		.attr("x",function(d,i){return i*(barWidth+slack)+barWidth/2;})
-		.attr("y",function(d){return 15+500-(d/30.0)*500;})
-		.attr("text-anchor","middle")
-		.attr("fill","white")
-		.text(function(d){return d;});*/
+		var dataStackLayout = d3.layout.stack()(dataset);
+		 
+		x.domain(dataStackLayout[0].map(function (d) {
+		    return d.x;
+		}));
+		 
+		y.domain([0,
+		    d3.max(dataStackLayout[dataStackLayout.length - 1],
+		            function (d) { return d.y0 + d.y;})
+		    ])
+		  .nice();
+		 
+		var layer = svg.selectAll(".stack")
+		        .data(dataStackLayout)
+		        .enter().append("g")
+		        .attr("class", "stack")
+		        .style("fill", function (d, i) {
+		            return color(i);
+		        });
+		 
+		layer.selectAll("rect")
+		        .data(function (d) {
+		            return d;
+		        })
+		        .enter().append("rect")
+		        .attr("x", function (d) {
+		            return x(d.x);
+		        })
+		        .attr("y", function (d) {
+		            return y(d.y + d.y0);
+		        })
+		        .attr("height", function (d) {
+		            return y(d.y0) - y(d.y + d.y0);
+		        })
+		        .attr("width", x.rangeBand());
 	}
 });
